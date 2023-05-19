@@ -561,12 +561,6 @@ func (e *Element) Text() string {
 	text := ""
 	for _, ch := range e.Child {
 		if cd, ok := ch.(*CharData); ok {
-			if cd.IsCData(){
-				e.CharDataFlagsIsCData=true
-			}
-			if cd.IsWhitespace(){
-				e.CharDataFlagsIsWhitespace=true
-			}
 			if text == "" {
 				text = cd.Data
 			} else {
@@ -849,6 +843,7 @@ func (e *Element) readFrom(ri io.Reader, settings ReadSettings) (n int64, err er
 			if pr != nil {
 				peekBuf := pr.PeekFinalize()
 				if bytes.Equal(peekBuf, cdataPrefix) {
+					e.CharDataFlagsIsCData=true
 					flags = cdataFlag
 				} else if isWhitespace(data) {
 					flags = whitespaceFlag
