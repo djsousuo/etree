@@ -224,6 +224,8 @@ type Element struct {
 	Child      []Token  // child tokens (elements, comments, etc.)
 	parent     *Element // parent element
 	index      int      // token index in parent's children
+	CharDataFlagsIsWhitespace bool
+	CharDataFlagsIsCData bool
 }
 
 // An Attr represents a key-value attribute within an XML element.
@@ -559,6 +561,12 @@ func (e *Element) Text() string {
 	text := ""
 	for _, ch := range e.Child {
 		if cd, ok := ch.(*CharData); ok {
+			if cd.IsCData(){
+				e.CharDataFlagsIsCData=true
+			}
+			if cd.IsWhitespace(){
+				e.CharDataFlagsIsWhitespace=true
+			}
 			if text == "" {
 				text = cd.Data
 			} else {
